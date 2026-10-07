@@ -1,7 +1,7 @@
 const bedrock = require('bedrock-protocol');
 
 const client = bedrock.createClient({
-  host: ':noblerealms.com', // Server IP
+  host: ':play.noblerealms.com', // Server IP
   port: 19132,                  // Bedrock default port
   username: '*Dev7Chowdary',    // Your Minecraft profile name
   offline: false                // Ensures it triggers Microsoft device login auth
