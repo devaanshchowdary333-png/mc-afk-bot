@@ -1,40 +1,36 @@
 const mineflayer = require('mineflayer');
-const { pathfinder, Movements, goals } = require('mineflayer-pathfinder');
 
 const bot = mineflayer.createBot({
-  host: 'YOUR_SERVER_IP_HERE', // <-- Put your server IP address here
-  port: 19132,                 // <-- Put your Bedrock Port here (Default is 19132)
-  username: 'AFK_Bot_Cloud',   // <-- The name your bot will use in game
-  auth: 'microsoft'            // <-- Requires Microsoft login authentication for public servers
+  host: 'play.noblerealms.com', // NobleRealms Server IP
+  port: 19132,                  // Bedrock Port
+  username: '*Dev7Chowdary',    // Your exact account username
+  auth: 'microsoft'            
 });
-
-bot.loadPlugin(pathfinder);
 
 bot.once('spawn', () => {
-  console.log("Bot successfully joined the server!");
+  console.log("Bot successfully joined NobleRealms!");
   
-  // Set your target farm coordinates
-  const targetX = 150; 
-  const targetY = 64;
-  const targetZ = -320;
-
-  const mcData = require('minecraft-data')(bot.version);
-  const defaultMove = new Movements(bot, mcData);
-  bot.pathfinder.setMovements(defaultMove);
-  
-  // Navigate to coordinates
-  bot.pathfinder.setGoal(new goals.GoalBlock(targetX, targetY, targetZ));
-});
-
-bot.on('goal_reached', () => {
-  console.log("Arrived at the farm location.");
-  bot.chat("I am now AFK at the farm. Do not kill me!");
-});
-
-// Auto-reconnect if the server restarts or crashes
-bot.on('end', () => {
-  console.log("Disconnected. Reconnecting in 10 seconds...");
+  // Wait 5 seconds for chunks to load up, then type your commands
   setTimeout(() => {
-    process.exit(1); // Restarts the cloud container to force a rejoin
-  }, 10000);
+    
+    // STEP 1: CHANGE THE TEXT INSIDE QUOTES TO YOUR TP COMMAND
+    // Examples: "/pwarp farm", "/home farm", or "/tpa friendname"
+    bot.chat("/home 4"); 
+    console.log("Teleport command sent.");
+    
+    // Step 2: Say a quick message in chat 3 seconds after moving
+    setTimeout(() => {
+      bot.chat("I am now AFK at my farm coordinates.");
+      console.log("AFK text sent.");
+    }, 3000);
+
+  }, 5000); 
+});
+
+// Auto-reconnect loop if kicked or if the server resets
+bot.on('end', () => {
+  console.log("Disconnected from NobleRealms. Reconnecting in 15 seconds...");
+  setTimeout(() => {
+    process.exit(1); 
+  }, 15000);
 });
