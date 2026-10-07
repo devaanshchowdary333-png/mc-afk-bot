@@ -1,36 +1,51 @@
-const mineflayer = require('mineflayer');
+const bedrock = require('bedrock-protocol');
 
-const bot = mineflayer.createBot({
-  host: 'play.noblerealms.com', // NobleRealms Server IP
-  port: 19132,                  // Bedrock Port
-  username: '*Dev7Chowdary',    // Your exact account username
-  auth: 'microsoft'            
+const client = bedrock.createClient({
+  host: '://noblerealms.com', // Server IP
+  port: 19132,                  // Bedrock default port
+  username: '*Dev7Chowdary',    // Your Minecraft profile name
+  offline: false                // Ensures it triggers Microsoft device login auth
 });
 
-bot.once('spawn', () => {
-  console.log("Bot successfully joined NobleRealms!");
+client.on('spawn', () => {
+  console.log("Bot successfully joined NobleRealms Bedrock Server!");
   
-  // Wait 5 seconds for chunks to load up, then type your commands
+  // Wait 5 seconds for world generation streams to buffer, then run commands
   setTimeout(() => {
-    
-    // STEP 1: CHANGE THE TEXT INSIDE QUOTES TO YOUR TP COMMAND
-    // Examples: "/pwarp farm", "/home farm", or "/tpa friendname"
-    bot.chat("/home 4"); 
-    console.log("Teleport command sent.");
-    
-    // Step 2: Say a quick message in chat 3 seconds after moving
+    // CHANGE "/home farm" to your exact teleport command text if different
+    client.queue('text', {
+      type: 'chat',
+      needs_translation: false,
+      source_name: client.username,
+      xuid: '',
+      platform_chat_id: '',
+      message: '/home farm'
+    });
+    console.log("Teleport command sent directly through Bedrock text layer.");
+
+    // Optional notification message 3 seconds later
     setTimeout(() => {
-      bot.chat("I am now AFK at my farm coordinates.");
-      console.log("AFK text sent.");
+      client.queue('text', {
+        type: 'chat',
+        needs_translation: false,
+        source_name: client.username,
+        xuid: '',
+        platform_chat_id: '',
+        message: 'I am now AFK at my farm coordinates.'
+      });
+      console.log("AFK confirmation text sent.");
     }, 3000);
 
-  }, 5000); 
+  }, 5000);
 });
 
-// Auto-reconnect loop if kicked or if the server resets
-bot.on('end', () => {
-  console.log("Disconnected from NobleRealms. Reconnecting in 15 seconds...");
+client.on('error', (err) => {
+  console.error("Protocol Error encountered:", err.message);
+});
+
+client.on('close', () => {
+  console.log("Disconnected from server. Reconnecting in 20 seconds...");
   setTimeout(() => {
     process.exit(1); 
-  }, 15000);
+  }, 20000);
 });
